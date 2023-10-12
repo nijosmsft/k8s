@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: linux-webserver
+  labels:
+    app: linux-webserver
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 80
+  selector:
+    app: linux-webserver
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: linux-webserver
+  name: linux-webserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: linux-webserver
+  template:
+    metadata:
+      labels:
+        app: linux-webserver
+    spec:
+      containers:
+      - name: linuxwebserver
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        beta.kubernetes.io/os: linux
